@@ -1,0 +1,43 @@
+name: Build plugin
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        shell: bash
+        run: cmake -S . -B build -A x64
+
+      - name: Build VST3 + standalone app
+        run: cmake --build build --config Release --target FartSynth_VST3 FartSynth_Standalone --parallel
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path "build/FartSynth_artefacts/Release/VST3/Fart Synth.vst3" -DestinationPath dist/FartSynth-VST3-Windows.zip
+          Compress-Archive -Path "build/FartSynth_artefacts/Release/Standalone/*" -DestinationPath dist/FartSynth-Standalone-Windows.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FartSynth-Windows
+          path: dist/*.zip
+
+      - name: Publish as the "latest" download
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest dist/*.zip --target "$GITHUB_SHA" --title "Fart Synth — latest build" \
+            --notes "Unzip FartSynth-VST3-Windows.zip and move the 'Fart Synth.vst3' folder into C:\\Program Files\\Common Files\\VST3, then rescan plugins in FL Studio."
