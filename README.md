@@ -13,7 +13,3 @@ Every push to `main` builds the plugin on GitHub Actions. Grab the latest from t
 1. Download `FartSynth-VST3-Windows.zip` and unzip it
 2. Move the `Fart Synth.vst3` folder into `C:\Program Files\Common Files\VST3`
 3. In FL Studio: Options → Manage plugins → Find plugins
-
-`FartSynth-Standalone-Windows.zip` is a standalone app version.
-
-`index.html` is the original browser prototype.

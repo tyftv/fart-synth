@@ -19,14 +19,13 @@ jobs:
         run: cmake -S . -B build -A x64
 
       - name: Build VST3 + standalone app
-        run: cmake --build build --config Release --target FartSynth_VST3 FartSynth_Standalone --parallel
+        run: cmake --build build --config Release --target FartSynth_VST3 --parallel
 
       - name: Package
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
           Compress-Archive -Path "build/FartSynth_artefacts/Release/VST3/Fart Synth.vst3" -DestinationPath dist/FartSynth-VST3-Windows.zip
-          Compress-Archive -Path "build/FartSynth_artefacts/Release/Standalone/*" -DestinationPath dist/FartSynth-Standalone-Windows.zip
 
       - uses: actions/upload-artifact@v4
         with:

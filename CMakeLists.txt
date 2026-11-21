@@ -24,7 +24,7 @@ juce_add_plugin(FartSynth
     PLUGIN_MANUFACTURER_CODE Tyfv
     PLUGIN_CODE Frts
     VST3_CATEGORIES Instrument Synth
-    FORMATS VST3 Standalone
+    FORMATS VST3
     COPY_PLUGIN_AFTER_BUILD FALSE)
 
 juce_add_binary_data(FartSynthData SOURCES assets/logo.png)
@@ -47,12 +47,3 @@ target_link_libraries(FartSynth
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_warning_flags)
-
-# optional offscreen render test (not used in CI)
-option(FART_TESTS "Build the offscreen render test" OFF)
-if (FART_TESTS)
-    juce_add_console_app(FartRender PRODUCT_NAME "FartRender")
-    target_sources(FartRender PRIVATE tests/render.cpp Source/ButtArt.cpp Source/ButtView.cpp Source/PluginProcessor.cpp Source/PluginEditor.cpp)
-    target_compile_definitions(FartRender PRIVATE JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_STANDALONE_APPLICATION=0)
-    target_link_libraries(FartRender PRIVATE FartSynthData juce::juce_audio_utils juce::juce_recommended_config_flags)
-endif()
